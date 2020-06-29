@@ -5,16 +5,18 @@ Code, data, and trained models from the [MICCAI 2020](https://miccai2020.org/en/
 
 ## Requirements
 Python 3.+
+
 ```
 $ pip install ...
 $ pip install ...
 ```
 
 ## Requirements
-
+*coming soon!*
 
 ## Basic usage
-
+*coming soon!*
 
 ## References
+*coming soon!*
 
