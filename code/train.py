@@ -21,6 +21,7 @@ import copy
 
 # network Model (PW-GAN GP 3D)
 from progressive_model3d import *
+from trabecuar_dataset import BonesPatchDataset
 from utils3d import *
 
 # pyTorch
@@ -32,7 +33,7 @@ import torch.optim as optim
 # torchvision
 import torchvision.utils
 import torchvision.transforms as transforms
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 from progressBar import printProgressBar
 
 torch.manual_seed(12)
@@ -61,42 +62,6 @@ gamma      = 1                 # gamma for gradient penalty
 n_iter = 5      # number of epochs to train before changing the progress
 e_drift = 0.001 # epsilon drift for discriminator loss
 
-# load and normalize data
-class BonesPatchDataset(Dataset):
-    """Bones Patch dataset."""
-
-    def __init__(self, root_dir, file_list, transform=None):
-        self.root_dir  = root_dir
-        self.file_list = file_list
-        self.transform = transform
-        
-    def __len__(self):
-        return len(self.file_list)
-
-    def __getitem__(self, idx):
-        # load volume
-        vol_name = os.path.join(self.root_dir,self.file_list[idx])
-        vol = torch.load(vol_name)           
-        
-        # normalize [-350,1100] h-units to [-1,1] range
-        vol = normalize_volume(vol)
-        
-        # transform to tensor
-        if self.transform:
-            vol = self.transform(vol)
-            
-        # clamp in range -1,1 (just in case some outlier is out of the range)
-        vol = torch.clamp(vol, -1., 1.)         
-        vol = vol.unsqueeze(0)
-        vol = vol.type(torch.FloatTensor)
-        return vol
-
-# get training data
-def create_dataset_splits(path, transform=None):
-    file_list = os.listdir(path) 
-    train_dataset = BonesPatchDataset(path, file_list, transform=transform)
-    return train_dataset
-
 # train
 def train():
     # transforms (no rotations yet)
@@ -105,7 +70,8 @@ def train():
     ])
     
     # dataset
-    train_dataset  = create_dataset_splits(data_path,0.1,0.1,transform=img_transform)
+    file_list = os.listdir(data_path) 
+    train_dataset = BonesPatchDataset(path, file_list, transform=img_transform)
     print('train ({}), test ({}), val ({})'.format(len(train_dataset),0,0))
     
     # dataloader
