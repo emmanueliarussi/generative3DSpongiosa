@@ -33,7 +33,7 @@ import torch.optim as optim
 import torchvision.utils
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from progressBar import printProgressBar
+from progress_bar import printProgressBar
 
 torch.manual_seed(12)
 
