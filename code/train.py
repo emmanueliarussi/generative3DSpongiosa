@@ -33,7 +33,6 @@ import torch.optim as optim
 import torchvision.utils
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from progress_bar import printProgressBar
 
 torch.manual_seed(12)
 
@@ -61,6 +60,22 @@ gamma      = 1                 # gamma for gradient penalty
 n_iter = 5      # number of epochs to train before changing the progress
 e_drift = 0.001 # epsilon drift for discriminator loss
 
+# Turn interactive plotting off
+plt.ioff()
+
+def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
+    fig = plt.figure(figsize=(10,10))
+    for i in range(16):
+        sub = fig.add_subplot(4, 4, i + 1)
+        #sub.set_title(str(i))
+        if vals is not None:
+            if vals[i]>0:
+                sub.set_title("Real")
+            else:
+                sub.set_title("Fake")
+        sub.imshow(aTensor[i,:,:])    
+    plt.savefig('../out/epoch_{}_iter_{}.png'.format(str(epoch).zfill(2),str(iterat).zfill(4)),dpi=150)
+    
 # train
 def train():
     # transforms (no rotations yet)
@@ -105,7 +120,12 @@ def train():
     # adam optimizers
     optimizerG = optim.Adam(netG.parameters(), lr=1e-3, betas=(0, 0.99))
     optimizerD = optim.Adam(netD.parameters(), lr=1e-3, betas=(0, 0.99))
-
+    
+    # training progress sample
+    z_fixed = hypersphere(torch.randn(batch_size, nch * 32, 1, 1, 1, device=device))
+    fake_images = netG(z_fixed)
+    saveTensorBatch(fake_images.detach().cpu().numpy().squeeze()[:,16,:,:])
+    
     # training loop
     while epoch<num_epochs:
         lossEpochG = []
@@ -181,7 +201,7 @@ def train():
             exp_mov_avg(netGs, netG, alpha=0.999, global_step=global_step)
             
         fake_images = netGs(z_fixed)
-        showTensorBatch(fake_images.detach().cpu().numpy().squeeze()[:,16,:,:],epoch=epoch,iterat=i)
+        saveTensorBatch(fake_images.detach().cpu().numpy().squeeze()[:,16,:,:],epoch=epoch,iterat=i)
         print("epoch [{}] - d_loss:{} - d_loss_W: {} - progress:{}".format(epoch,np.mean(lossEpochD),np.mean(lossEpochD_W),P.p))
 
         # save status 
