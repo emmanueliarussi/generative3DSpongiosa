@@ -60,9 +60,6 @@ gamma      = 1                 # gamma for gradient penalty
 n_iter = 5      # number of epochs to train before changing the progress
 e_drift = 0.001 # epsilon drift for discriminator loss
 
-# Turn interactive plotting off
-plt.ioff()
-
 def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
     fig = plt.figure(figsize=(10,10))
     for i in range(16):
