@@ -10,7 +10,9 @@ import numpy as np
 import scipy.ndimage.morphology as morph
 from tqdm import tqdm 
 import ipyvolume as ipv
-import matplotlib.pyplot as plt 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 import sys
 import os
