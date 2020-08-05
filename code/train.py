@@ -38,7 +38,7 @@ from progress_bar import printProgressBar
 torch.manual_seed(12)
 
 # data path
-data_path = 'data/patches_32x32x32'
+data_path = '../data/patches_32x32x32'
 
 # hyperparams. Need to set these using command args
 device        = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
