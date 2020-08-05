@@ -6,19 +6,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by/4.
 
 """
 # misc
+import os
+import copy
+import argparse
 import numpy as np
-import scipy.ndimage.morphology as morph
-from tqdm import tqdm 
-import ipyvolume as ipv
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
-import sys
-import os
-import io
-import random
-import copy
 
 # network Model (PW-GAN GP 3D)
 from progressive_model3d import *
@@ -28,7 +22,6 @@ from utils3d import *
 # pyTorch
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 
 # torchvision
@@ -38,12 +31,36 @@ from torch.utils.data import DataLoader
 
 torch.manual_seed(12)
 
+# arg parser
+parser = argparse.ArgumentParser()
+
+# training params
+parser.add_argument('--data_path', type=str, default='../data/patches_32x32x32', help='Input data directory')
+parser.add_argument('--device', type=str, default=1, help='Training device. [cuda|cpu]. Default: cuda')
+parser.add_argument('--epochs', type=int, default=30, help='Number of epochs to train')
+parser.add_argument('--batch_size', type=int, default=16, help='Size of the training batch')
+parser.add_argument('--lr', type=float, default=1e-4, help='Initial learning rate')
+parser.add_argument('--fix_random_seed', type=int, default=1, help='Fix random seed')
+
+# PW-GAN GP params
+parser.add_argument('--max_res', type=int, default=3, help='Max upsampled resolution (3->32x32x32)')
+parser.add_argument('--in_nch', type=int, default=1, help='Number of input channels')
+parser.add_argument('--use_batch_norm', type=int, default=0, help='Use BatchNorm')
+parser.add_argument('--use_weight_scale', type=int, default=1, help='Use WeightScale')
+parser.add_argument('--use_pixel_norm', type=int, default=1, help='Use PixelNorm')
+
+parser.add_argument('--lambda_gradient_penalty', type=float, default=10, help='Lambda for gradient penalty')
+parser.add_argument('--gamma_gradient_penalty', type=float, default=1, help='Gamma for gradient penalty')
+parser.add_argument('--n_iter', type=int, default=5, help='Number of epochs to train before changing the progress')
+parser.add_argument('--epsilon_drift', type=float, default=0.001, help='Epsilon drift for discriminator loss')
+parser.add_argument('--batch_sizes', nargs='+', default=[16, 16, 16, 16], help='List of batch sizes during the training')
+
+
 # data path
 data_path = '../data/patches_32x32x32'
 
 # hyperparams. Need to set these using command args
 device        = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-latent_dims   = 10
 num_epochs    = 30
 batch_size    = 16
 learning_rate = 1e-4
@@ -76,7 +93,7 @@ def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
     plt.savefig('../out/epoch_{}_iter_{}.png'.format(str(epoch).zfill(2),str(iterat).zfill(4)),dpi=150)
     
 # train
-def train():
+def train(opt):
     # transforms (no rotations yet)
     img_transform = transforms.Compose([
         transforms.ToTensor(),
@@ -160,7 +177,7 @@ def train():
             D_fake = netD(fake_images, P.p)
             D_fakem = D_fake.mean()
 
-            # compute gradient penalty for WGAN-GP as defined in the article
+            # compute gradient penalty for WGAN-GP 
             gradient_penalty = GP(netD, batch.data, fake_images.data, P.p)
 
             # prevent D_real from drifting too much from 0
@@ -205,11 +222,12 @@ def train():
 
         # save status 
         if P.p >= P.pmax and not epoch % savemodel:
-            torch.save(netG.state_dict(),  os.path.join('model_checkpoints', 'g_nch-{}_epoch-{}.pth'.format(nch,epoch)))
-            torch.save(netD.state_dict(),  os.path.join('model_checkpoints', 'd_nch-{}_epoch-{}.pth'.format(nch,epoch)))
-            torch.save(netGs.state_dict(), os.path.join('model_checkpoints', 'gs_nch-{}_epoch-{}.pth'.format(nch,epoch))) 
+            torch.save(netG.state_dict(),  os.path.join('../model_checkpoints', 'g_nch-{}_epoch-{}.pth'.format(nch,epoch)))
+            torch.save(netD.state_dict(),  os.path.join('../model_checkpoints', 'd_nch-{}_epoch-{}.pth'.format(nch,epoch)))
+            torch.save(netGs.state_dict(), os.path.join('../model_checkpoints', 'gs_nch-{}_epoch-{}.pth'.format(nch,epoch))) 
 
         epoch += 1
 
 if __name__ == '__main__':
-    train()
+    opt = parser.parse_args()   # get training options
+    train(opt)
