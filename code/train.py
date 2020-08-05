@@ -70,7 +70,7 @@ def train():
     
     # dataset
     file_list = os.listdir(data_path) 
-    train_dataset = BonesPatchDataset(path, file_list, transform=img_transform)
+    train_dataset = BonesPatchDataset(data_path, file_list, transform=img_transform)
     print('train ({}), test ({}), val ({})'.format(len(train_dataset),0,0))
     
     # dataloader
