@@ -11,7 +11,6 @@ import scipy.ndimage.morphology as morph
 from tqdm import tqdm 
 import ipyvolume as ipv
 import matplotlib.pyplot as plt 
-%matplotlib inline 
 
 import sys
 import os
