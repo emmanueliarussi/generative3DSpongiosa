@@ -19,7 +19,7 @@ from progressive_model3d import *
 from trabecuar_dataset import BonesPatchDataset
 from utils3d import *
 
-# pyTorch
+# pytorch
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -36,11 +36,12 @@ parser = argparse.ArgumentParser()
 
 # training params
 parser.add_argument('--data_path', type=str, default='../data/patches_32x32x32', help='Input data directory')
-parser.add_argument('--device', type=str, default=1, help='Training device. [cuda|cpu]. Default: cuda')
+parser.add_argument('--device', type=str, default='cuda', help='Training device. [cuda|cpu]. Default: cuda')
 parser.add_argument('--epochs', type=int, default=30, help='Number of epochs to train')
 parser.add_argument('--batch_size', type=int, default=16, help='Size of the training batch')
 parser.add_argument('--lr', type=float, default=1e-4, help='Initial learning rate')
 parser.add_argument('--fix_random_seed', type=int, default=1, help='Fix random seed')
+parser.add_argument('--model_checkpoints', type=int, default=5, help='Checkpoints interval')
 
 # PW-GAN GP params
 parser.add_argument('--max_res', type=int, default=3, help='Max upsampled resolution (3->32x32x32)')
@@ -55,29 +56,6 @@ parser.add_argument('--n_iter', type=int, default=5, help='Number of epochs to t
 parser.add_argument('--epsilon_drift', type=float, default=0.001, help='Epsilon drift for discriminator loss')
 parser.add_argument('--batch_sizes', nargs='+', default=[16, 16, 16, 16], help='List of batch sizes during the training')
 
-
-# data path
-data_path = '../data/patches_32x32x32'
-
-# hyperparams. Need to set these using command args
-device        = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-num_epochs    = 30
-batch_size    = 16
-learning_rate = 1e-4
-use_gpu       = True
-savemodel     = 5
-
-# list of PW-GAN GP params
-max_res = 3 # for 32x32x32 output
-nch     = 1 # number of channels
-bn      = False # Use BatchNorm
-ws      = True  # Use WeightScale
-pn      = True  # Use PixelNorm
-batchSizes = [16, 16, 16, 16]  # list of batch sizes during the training
-lambdaGP   = 10                # lambda for gradient penalty
-gamma      = 1                 # gamma for gradient penalty
-n_iter = 5      # number of epochs to train before changing the progress
-e_drift = 0.001 # epsilon drift for discriminator loss
 
 def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
     fig = plt.figure(figsize=(10,10))
@@ -94,6 +72,32 @@ def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
     
 # train
 def train(opt):
+    
+    # options
+   
+    # data path
+    data_path = opt.data_path
+
+    # hyperparameters
+    if(opt.device == 'cuda'):
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    else:
+        device = 'cpu'
+    num_epochs    = opt.epochs
+    batch_size    = opt.batch_size
+    learning_rate = opt.lr
+    savemodel     = opt.model_checkpoints
+    max_res = opt.max_res 
+    nch     = opt.in_nch                     # number of channels
+    bn      = opt.use_batch_norm             # batchnorm
+    ws      = opt.use_weight_scale           # weightscale
+    pn      = opt.use_pixel_norm             # pixelnorm
+    batchSizes = opt.batch_sizes             # list of batch sizes during the training
+    lambdaGP   = opt.lambda_gradient_penalty # lambda for gradient penalty
+    gamma      = opt.gamma_gradient_penalty  # gamma for gradient penalty
+    n_iter = opt.n_iter                      # number of epochs to train before changing the progress
+    e_drift = opt.epsilon_drift              # epsilon drift for discriminator loss
+    
     # transforms (no rotations yet)
     img_transform = transforms.Compose([
         transforms.ToTensor(),
