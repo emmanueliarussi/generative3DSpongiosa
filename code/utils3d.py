@@ -34,7 +34,11 @@ def exp_mov_avg(Gs, G, alpha=0.999, global_step=999):
 
 # normalize volume [-350,1100] h-units to [-1,1] range
 def normalize_volume(vol):
-    return 2/(1100-(-350)) * (vol-1100) + 1;
+    return 2./(1100.-(-350.)) * (vol-1100.) + 1.;
+
+# denormalize volume from [-1,1] range to [-350,1100] h-units 
+def denormalize_volume(vol):
+    return ((vol + 1.) * (1100.-(-350.)) / 2.) - 350. 
 
 # class handling the progressive training pipeline
 class Progress:

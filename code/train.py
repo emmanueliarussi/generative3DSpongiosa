@@ -52,7 +52,7 @@ parser.add_argument('--use_pixel_norm', type=int, default=1, help='Use PixelNorm
 
 parser.add_argument('--lambda_gradient_penalty', type=float, default=10, help='Lambda for gradient penalty')
 parser.add_argument('--gamma_gradient_penalty', type=float, default=1, help='Gamma for gradient penalty')
-parser.add_argument('--n_iter', type=int, default=5, help='Number of epochs to train before changing the progress')
+parser.add_argument('--n_iter', type=int, default=1, help='Number of epochs to train before changing the progress')
 parser.add_argument('--epsilon_drift', type=float, default=0.001, help='Epsilon drift for discriminator loss')
 parser.add_argument('--batch_sizes', nargs='+', default=[16, 16, 16, 16], help='List of batch sizes during the training')
 
