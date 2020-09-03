@@ -22,6 +22,12 @@ $ conda activate spongiosa
 $ cd code
 $ python train.py
 ```
+## Sampling new bone
+
+```
+$ cd code
+$ python synthesize_random_samples.py --num_samples 20
+```
 
 ## References
 *coming soon!*

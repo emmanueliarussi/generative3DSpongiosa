@@ -14,7 +14,7 @@ import os
 from matplotlib import pyplot as plt
 
 def _mean(data,conv_size=(16,16,16),stride=(16,16,16)):
-    kernel = (torch.ones((1)).expand((1,1,*conv_size))/torch.tensor(conv_size).prod()).float()
+    kernel = (torch.ones((1)).expand((1,1,*conv_size))/torch.tensor(conv_size).float().prod()).float()
     kernel = kernel.type(torch.cuda.FloatTensor)
     return torch.nn.functional.conv3d(data,kernel,stride = stride)
 

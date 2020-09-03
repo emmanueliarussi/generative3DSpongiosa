@@ -56,7 +56,7 @@ parser.add_argument('--n_iter', type=int, default=1, help='Number of epochs to t
 parser.add_argument('--epsilon_drift', type=float, default=0.001, help='Epsilon drift for discriminator loss')
 parser.add_argument('--batch_sizes', nargs='+', default=[16, 16, 16, 16], help='List of batch sizes during the training')
 
-
+# Show tensor output
 def saveTensorBatch(aTensor,vals=None,epoch=0,iterat=0):
     fig = plt.figure(figsize=(10,10))
     for i in range(16):
@@ -78,7 +78,7 @@ def train(opt):
     # data path
     data_path = opt.data_path
 
-	# output dir (checkpoints) and for imgs
+    # output dir (checkpoints) and for imgs
     if not os.path.exists('../model_checkpoints'):
         os.makedirs('../model_checkpoints')       
     if not os.path.exists('../out'):
@@ -89,6 +89,7 @@ def train(opt):
         device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     else:
         device = 'cpu'
+        
     num_epochs    = opt.epochs
     batch_size    = opt.batch_size
     learning_rate = opt.lr
@@ -110,6 +111,8 @@ def train(opt):
     ])
     
     # dataset
+    print("Loading data set..")
+
     file_list = os.listdir(data_path) 
     train_dataset = BonesPatchDataset(data_path, file_list, transform=img_transform)
     print('train ({}), test ({}), val ({})'.format(len(train_dataset),0,0))
@@ -123,6 +126,8 @@ def train(opt):
     netGs = copy.deepcopy(netG)
     
     # params count
+    print("Creating Network..")
+
     pytorch_total_params = sum(p.numel() for p in netG.parameters())
     print('Generator has',pytorch_total_params,'parameters')
     pytorch_total_params = sum(p.numel() for p in netD.parameters())
@@ -152,6 +157,8 @@ def train(opt):
     fake_images = netG(z_fixed)
     saveTensorBatch(fake_images.detach().cpu().numpy().squeeze()[:,16,:,:])
     
+    print("Starting trianing..")
+
     # training loop
     while epoch<num_epochs:
         lossEpochG = []
