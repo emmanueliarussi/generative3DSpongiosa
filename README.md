@@ -4,9 +4,9 @@ Code, data, and trained models from the [MICCAI 2020](https://miccai2020.org/en/
 ![teaser](img/overview.png)
 
 ## Requirements
-Python 3.+ and PyTorch 1.0.0.
+Python 3.+ and PyTorch 1.6.0.
 
-The code has been tested only with PyTorch 1.0.0, there are no guarantees that it is compatible with older versions. 
+The code has been tested only with PyTorch 1.6.0, there are no guarantees that it is compatible with older versions. 
 
 ## Clone repo
 ```
