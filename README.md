@@ -29,7 +29,7 @@ $ cd code
 $ python synthesize_random_samples.py --num_samples 20
 ```
 
-## Optimizing for micro-structural parrameters
+## Optimizing for micro-structural parameters
 
 ```
 $ cd code
