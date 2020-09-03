@@ -39,7 +39,7 @@ parser.add_argument('--data_path', type=str, default='../data/patches_32x32x32',
 parser.add_argument('--device', type=str, default='cuda', help='Training device. [cuda|cpu]. Default: cuda')
 parser.add_argument('--epochs', type=int, default=50, help='Number of epochs to train')
 parser.add_argument('--batch_size', type=int, default=16, help='Size of the training batch')
-parser.add_argument('--lr', type=float, default=1e-4, help='Initial learning rate')
+parser.add_argument('--lr', type=float, default=1e-3, help='Initial learning rate')
 parser.add_argument('--fix_random_seed', type=int, default=1, help='Fix random seed')
 parser.add_argument('--model_checkpoints', type=int, default=5, help='Checkpoints interval')
 
@@ -149,8 +149,8 @@ def train(opt):
     GP.batchSize = P.batchSize
     
     # adam optimizers
-    optimizerG = optim.Adam(netG.parameters(), lr=1e-3, betas=(0, 0.99))
-    optimizerD = optim.Adam(netD.parameters(), lr=1e-3, betas=(0, 0.99))
+    optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(0, 0.99))
+    optimizerD = optim.Adam(netD.parameters(), lr=opt.lr, betas=(0, 0.99))
     
     # training progress sample
     z_fixed = hypersphere(torch.randn(batch_size, nch * 32, 1, 1, 1, device=device))
