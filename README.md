@@ -8,10 +8,19 @@ Python 3.+ and PyTorch 1.0.0.
 
 The code has been tested only with PyTorch 1.0.0, there are no guarantees that it is compatible with older versions. 
 
-## Basic usage
+## Clone repo
 ```
-$ 
-$ 
+$ git clone https://github.com/emmanueliarussi/generative3DSpongiosa.git
+$ cd generative3DSpongiosa
+```
+## Basic usage
+Before training, [download paper's data](https://github.com/emmanueliarussi/generative3DSpongiosa/blob/master/data/patches_32x32x32.zip) and unzip it inside data folder.
+
+```
+$ conda env create -f environment.yml
+$ conda activate spongiosa
+$ cd code
+$ python train.py
 ```
 
 ## References

@@ -78,6 +78,12 @@ def train(opt):
     # data path
     data_path = opt.data_path
 
+	# output dir (checkpoints) and for imgs
+    if not os.path.exists('../model_checkpoints'):
+        os.makedirs('../model_checkpoints')       
+    if not os.path.exists('../out'):
+        os.makedirs('../out')
+
     # hyperparameters
     if(opt.device == 'cuda'):
         device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
