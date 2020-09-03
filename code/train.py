@@ -37,7 +37,7 @@ parser = argparse.ArgumentParser()
 # training params
 parser.add_argument('--data_path', type=str, default='../data/patches_32x32x32', help='Input data directory')
 parser.add_argument('--device', type=str, default='cuda', help='Training device. [cuda|cpu]. Default: cuda')
-parser.add_argument('--epochs', type=int, default=30, help='Number of epochs to train')
+parser.add_argument('--epochs', type=int, default=50, help='Number of epochs to train')
 parser.add_argument('--batch_size', type=int, default=16, help='Size of the training batch')
 parser.add_argument('--lr', type=float, default=1e-4, help='Initial learning rate')
 parser.add_argument('--fix_random_seed', type=int, default=1, help='Fix random seed')
