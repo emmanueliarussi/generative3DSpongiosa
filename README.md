@@ -18,7 +18,7 @@ Before training, [download paper's data](https://github.com/emmanueliarussi/gene
 
 ```
 $ conda env create -f environment.yml
-$ conda activate spongiosa
+$ conda activate generativespongiosa
 $ cd code
 $ python train.py
 ```
